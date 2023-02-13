@@ -2,11 +2,13 @@ import React from "react";
 import cn from "classnames";
 
 interface Props {
+  currentCell: boolean;
   editMode: boolean;
   fieldValue: number;
   guess: number;
   hidden: boolean;
   index: number;
+  selectCell?: (arg: number) => void;
 }
 
 const BORDER_RIGHT = [
@@ -26,17 +28,27 @@ const BORDER_BOTTOM = [
   73, 74, 75, 76, 77, 78, 79, 80,
 ];
 
-export const Cell = ({ editMode, fieldValue, guess, hidden, index }: Props) => {
+export const Cell = ({
+  currentCell,
+  editMode,
+  fieldValue,
+  guess,
+  hidden,
+  index,
+  selectCell,
+}: Props) => {
   const [guesses, setGuesses] = React.useState([]);
   const className = cn("cell", {
     "cell-right": BORDER_RIGHT.includes(index),
     "cell-bottom": BORDER_BOTTOM.includes(index),
     "cell-left": BORDER_LEFT.includes(index),
     "cell-top": BORDER_TOP.includes(index),
+    "cell-current": currentCell,
   });
+  const clickEvent = () => selectCell && selectCell(index);
 
   return (
-    <div className={className}>
+    <div className={className} onClick={clickEvent}>
       <div className="cell__field-value">
         {fieldValue !== 0 ? fieldValue : ""}
       </div>

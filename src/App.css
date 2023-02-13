@@ -6,6 +6,7 @@
   display: grid;
   grid-auto-rows: minmax(auto, 39px);
   grid-template-columns: repeat(9, 1fr);
+  margin: auto;
   max-width: 360px;
   padding: 12px;
 }
@@ -30,9 +31,38 @@
   border-left: 1px solid black;
   padding-left: 1px;
 }
-
 .cell__field-value {
-  text-align: center;
-  height: 100%;
   font-size: 2rem;
+  height: 100%;
+  text-align: center;
+}
+.cell.cell-current {
+  background-color: lightgray;
+}
+
+.numpad-component {
+  display: grid;
+  grid-auto-rows: minmax(auto, 39px);
+  grid-template-columns: repeat(3, 1fr);
+  margin: auto;
+  max-width: 360px;
+  padding: 12px;
+}
+
+.numpad-num {
+  align-items: center;
+  display: flex;
+  font-size: 2em;
+  height: 60px;
+  justify-content: center;
+  text-align: center;
+}
+
+.numpad-num:hover {
+  background-color: lightgray;
+}
+
+.numpad-num.current-num {
+  background-color: gray;
+  color: white;
 }

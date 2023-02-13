@@ -3,6 +3,8 @@ import React from "react";
 import { createBoard } from "../utilities/sudokuBoardCreate";
 
 type PrivateBoard = {
+  currentCell?: number;
+  currentNumber?: number;
   value?: number;
   fieldValue: number;
   hidden: boolean;
@@ -10,20 +12,32 @@ type PrivateBoard = {
 };
 
 interface ReducerType {
+  currentCell?: number;
+  currentNumber?: number;
   difficulty: number;
   editMode: boolean;
   errors: number;
   board: PrivateBoard[];
 }
 
-const BoardContext = React.createContext<ReducerType>({
+interface PublicInterface extends ReducerType {
+  actions?: {
+    selectCell: (cell: number) => void;
+    selectNumber: (num: number) => void;
+  };
+}
+
+const BoardContext = React.createContext<PublicInterface>({
   board: [],
+  currentCell: undefined,
   difficulty: 0.5,
   editMode: false,
   errors: 0,
 });
 
 const initialState = {
+  currentCell: undefined,
+  currentNumber: undefined,
   difficulty: 0.5,
   editMode: false,
   errors: 0,
@@ -47,6 +61,14 @@ type ActionType =
       type: "MAKE_GUESS";
       position: number;
       guess: number;
+    }
+  | {
+      type: "SELECT_CELL";
+      cell?: number;
+    }
+  | {
+      type: "SELECT_NUM";
+      num?: number;
     };
 
 function boardReducer(state: ReducerType, action: ActionType): ReducerType {
@@ -72,6 +94,12 @@ function boardReducer(state: ReducerType, action: ActionType): ReducerType {
 
       return { ...state, errors, board: newboard };
     }
+    case "SELECT_CELL": {
+      return { ...state, currentCell: action.cell };
+    }
+    case "SELECT_NUM": {
+      return { ...state, currentNumber: action.num };
+    }
     default: {
       return state;
     }
@@ -83,10 +111,10 @@ interface ProviderLayer {
 }
 
 function BoardProvider({ children }: ProviderLayer) {
-  const [{ difficulty, editMode, errors, board }, dispatch] = React.useReducer(
-    boardReducer,
-    initialState
-  );
+  const [
+    { currentCell, currentNumber, difficulty, editMode, errors, board },
+    dispatch,
+  ] = React.useReducer(boardReducer, initialState);
 
   React.useEffect(() => {
     const newBoard = createBoard().map((value) => {
@@ -101,10 +129,16 @@ function BoardProvider({ children }: ProviderLayer) {
     dispatch({ type: "SET_NEW_BOARD", board: newBoard });
   }, [difficulty]);
 
-  const exposedState: ReducerType = {
+  const exposedState: PublicInterface = {
+    currentCell: currentCell,
+    currentNumber: currentNumber,
     difficulty: difficulty,
     editMode: editMode,
     errors: errors,
+    actions: {
+      selectCell: (cell?: number) => dispatch({ type: "SELECT_CELL", cell }),
+      selectNumber: (num?: number) => dispatch({ type: "SELECT_NUM", num }),
+    },
     board: board.map(
       ({ fieldValue, guess, hidden }: PrivateBoard): PrivateBoard => ({
         fieldValue,
