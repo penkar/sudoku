@@ -24,6 +24,7 @@ interface PublicInterface extends ReducerType {
   actions?: {
     selectCell: (cell: number) => void;
     selectNumber: (num: number) => void;
+    toggleEditMode: () => void;
   };
 }
 
@@ -55,7 +56,6 @@ type ActionType =
     }
   | {
       type: "SET_EDIT_MODE";
-      editMode: boolean;
     }
   | {
       type: "MAKE_GUESS";
@@ -67,7 +67,7 @@ type ActionType =
       cell?: number;
     }
   | {
-      type: "SELECT_NUM";
+      type: "SELECT_NUMBER";
       num?: number;
     };
 
@@ -79,7 +79,7 @@ function boardReducer(state: ReducerType, action: ActionType): ReducerType {
     case "SET_NEW_BOARD":
       return { ...state, board: action.board, errors: 0, editMode: false };
     case "SET_EDIT_MODE":
-      return { ...state, editMode: action.editMode };
+      return { ...state, editMode: !state.editMode };
     case "MAKE_GUESS": {
       const newboard = [...state.board];
       let errors = state.errors;
@@ -95,10 +95,14 @@ function boardReducer(state: ReducerType, action: ActionType): ReducerType {
       return { ...state, errors, board: newboard };
     }
     case "SELECT_CELL": {
-      return { ...state, currentCell: action.cell };
+      const currentCell =
+        action.cell === state.currentCell ? undefined : action.cell;
+      return { ...state, currentCell };
     }
-    case "SELECT_NUM": {
-      return { ...state, currentNumber: action.num };
+    case "SELECT_NUMBER": {
+      const currentNumber =
+        action.num === state.currentNumber ? undefined : action.num;
+      return { ...state, currentNumber };
     }
     default: {
       return state;
@@ -137,7 +141,8 @@ function BoardProvider({ children }: ProviderLayer) {
     errors: errors,
     actions: {
       selectCell: (cell?: number) => dispatch({ type: "SELECT_CELL", cell }),
-      selectNumber: (num?: number) => dispatch({ type: "SELECT_NUM", num }),
+      selectNumber: (num?: number) => dispatch({ type: "SELECT_NUMBER", num }),
+      toggleEditMode: () => dispatch({ type: "SET_EDIT_MODE" }),
     },
     board: board.map(
       ({ fieldValue, guess, hidden }: PrivateBoard): PrivateBoard => ({

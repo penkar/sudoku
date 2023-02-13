@@ -2,6 +2,7 @@ import React from "react";
 import cn from "classnames";
 
 interface Props {
+  currentNumber?: number;
   currentCell: boolean;
   editMode: boolean;
   fieldValue: number;
@@ -30,6 +31,7 @@ const BORDER_BOTTOM = [
 
 export const Cell = ({
   currentCell,
+  currentNumber,
   editMode,
   fieldValue,
   guess,
@@ -44,8 +46,10 @@ export const Cell = ({
     "cell-left": BORDER_LEFT.includes(index),
     "cell-top": BORDER_TOP.includes(index),
     "cell-current": currentCell,
+    "cell-current-number": fieldValue === currentNumber,
+    "cell-selectable": !fieldValue,
   });
-  const clickEvent = () => selectCell && selectCell(index);
+  const clickEvent = () => !fieldValue && selectCell && selectCell(index);
 
   return (
     <div className={className} onClick={clickEvent}>

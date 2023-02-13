@@ -1,7 +1,8 @@
-.App {
-  text-align: center;
+* {
+  user-select: none;
 }
 
+/* Game Board Styles */
 .board-component {
   display: grid;
   grid-auto-rows: minmax(auto, 39px);
@@ -11,6 +12,7 @@
   padding: 12px;
 }
 
+/* Cell Styles */
 .cell {
   border: 1px solid gray;
 }
@@ -39,7 +41,36 @@
 .cell.cell-current {
   background-color: lightgray;
 }
+.cell.cell-selectable {
+  cursor: pointer;
+}
+.cell.cell-current-number {
+  color: blue;
+  background-color: cornsilk;
+}
 
+/* Control Panel Styles */
+.control-panel {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  height: 45px;
+  justify-content: space-evenly;
+}
+.control-panel__errors {
+  color: red;
+  font-size: 1.5em;
+}
+.control-panel__pencil {
+  color: gray;
+  cursor: pointer;
+  font-size: 2em;
+}
+.control-panel__pencil.edit-mode {
+  color: black;
+}
+
+/* Number Pad components */
 .numpad-component {
   display: grid;
   grid-auto-rows: minmax(auto, 39px);
@@ -48,7 +79,6 @@
   max-width: 360px;
   padding: 12px;
 }
-
 .numpad-num {
   align-items: center;
   display: flex;
@@ -57,11 +87,9 @@
   justify-content: center;
   text-align: center;
 }
-
 .numpad-num:hover {
   background-color: lightgray;
 }
-
 .numpad-num.current-num {
   background-color: gray;
   color: white;

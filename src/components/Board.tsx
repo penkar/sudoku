@@ -1,11 +1,9 @@
 import { Cell } from "./Cell";
 import { useBoard } from "../contexts/useBoard";
 
-// difficulty,
-// errors,
 export const Board = () => {
-  const { actions, board, currentCell, editMode } = useBoard();
-  const props = { selectCell: actions?.selectCell, editMode };
+  const { actions, board, currentCell, currentNumber, editMode } = useBoard();
+  const props = { currentNumber, selectCell: actions?.selectCell, editMode };
 
   return (
     <div className="board-component">
