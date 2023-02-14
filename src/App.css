@@ -99,3 +99,8 @@
   background-color: gray;
   color: white;
 }
+.numpad-num.numpad-num__complete {
+  background: darkgray;
+  color: white;
+  pointer-events: none;
+}
