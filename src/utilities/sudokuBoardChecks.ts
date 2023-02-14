@@ -30,7 +30,6 @@ export const checkSector = (gameBoard: Board): boolean => {
     [0, 1, 2, 9, 10, 11, 18, 19, 20].forEach((j) => {
       sector.add(gameBoard[i + j]);
     });
-    // console.log("sector", sector.size, Array.from(sector));
     if (sector.size !== 9) validBoard = false;
   });
   return validBoard;

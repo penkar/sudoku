@@ -5,19 +5,20 @@ import { createBoard } from "../utilities/sudokuBoardCreate";
 type PrivateBoard = {
   currentCell?: number;
   currentNumber?: number;
-  value?: number;
   fieldValue: number;
-  hidden: boolean;
   guess: number;
+  guessSet: Set<number>;
+  hidden: boolean;
+  value?: number;
 };
 
 interface ReducerType {
+  board: PrivateBoard[];
   currentCell?: number;
   currentNumber?: number;
   difficulty: number;
   editMode: boolean;
   errors: number;
-  board: PrivateBoard[];
 }
 
 interface PublicInterface extends ReducerType {
@@ -54,22 +55,12 @@ type ActionType =
       type: "SET_NEW_BOARD";
       board: PrivateBoard[];
     }
-  | {
-      type: "SET_EDIT_MODE";
-    }
-  | {
-      type: "MAKE_GUESS";
-      position: number;
-      guess: number;
-    }
-  | {
-      type: "SELECT_CELL";
-      cell?: number;
-    }
-  | {
-      type: "SELECT_NUMBER";
-      num?: number;
-    };
+  | { type: "SET_EDIT_MODE" }
+  | { type: "UNSELECT_NUMBER" }
+  | { type: "SELECT_CURRENT_NUMBER"; num: number }
+  | { type: "TOGGLE_EDIT_NUMBER"; num: number }
+  | { type: "SELECT_CELL"; cell?: number }
+  | { type: "SELECT_NUMBER"; num: number };
 
 function boardReducer(state: ReducerType, action: ActionType): ReducerType {
   switch (action.type) {
@@ -80,29 +71,57 @@ function boardReducer(state: ReducerType, action: ActionType): ReducerType {
       return { ...state, board: action.board, errors: 0, editMode: false };
     case "SET_EDIT_MODE":
       return { ...state, editMode: !state.editMode };
-    case "MAKE_GUESS": {
-      const newboard = [...state.board];
-      let errors = state.errors;
-      const position = {
-        ...newboard[action.position],
-        fieldValue: action.guess,
-      };
-      if (position.value !== action.guess) {
-        errors += 1;
-      }
-      newboard[action.position] = position;
-
-      return { ...state, errors, board: newboard };
-    }
     case "SELECT_CELL": {
       const currentCell =
         action.cell === state.currentCell ? undefined : action.cell;
       return { ...state, currentCell };
     }
+    case "UNSELECT_NUMBER": {
+      return { ...state, currentNumber: undefined };
+    }
+    case "SELECT_CURRENT_NUMBER": {
+      return { ...state, currentNumber: action.num };
+    }
+    case "TOGGLE_EDIT_NUMBER": {
+      const currentCell = state.currentCell || 0;
+      const board = state.board;
+      const cell = board[currentCell];
+      const guessSet = cell.guessSet;
+      if (guessSet.has(action.num)) {
+        guessSet.delete(action.num);
+      } else {
+        guessSet.add(action.num);
+      }
+      state.board[currentCell].guessSet = guessSet;
+      board[currentCell].guessSet = guessSet;
+      return { ...state, board };
+    }
     case "SELECT_NUMBER": {
-      const currentNumber =
-        action.num === state.currentNumber ? undefined : action.num;
-      return { ...state, currentNumber };
+      // Action called when user clicks on a number from the number pad.
+      let currentNumber = action.num;
+      const currentCell = state.currentCell || 0;
+      const value = state.board[currentCell].value;
+
+      if (value === currentNumber) {
+        const board = state.board;
+        const cell = {
+          ...board[currentCell],
+          fieldValue: currentNumber,
+        };
+        board[currentCell] = cell;
+        return {
+          ...state,
+          board,
+          currentCell: undefined,
+          currentNumber: undefined,
+        };
+      } else {
+        return {
+          ...state,
+          errors: state.errors + 1,
+          currentNumber: undefined,
+        };
+      }
     }
     default: {
       return state;
@@ -127,6 +146,7 @@ function BoardProvider({ children }: ProviderLayer) {
         value,
         fieldValue: hiddenField ? 0 : value,
         guess: 0,
+        guessSet: new Set<number>(),
         hidden: hiddenField,
       };
     });
@@ -141,13 +161,33 @@ function BoardProvider({ children }: ProviderLayer) {
     errors: errors,
     actions: {
       selectCell: (cell?: number) => dispatch({ type: "SELECT_CELL", cell }),
-      selectNumber: (num?: number) => dispatch({ type: "SELECT_NUMBER", num }),
+      selectNumber: (num: number) => {
+        if (currentCell === undefined) {
+          if (num === currentNumber) {
+            return dispatch({ type: "UNSELECT_NUMBER" });
+          } else {
+            return dispatch({ type: "SELECT_CURRENT_NUMBER", num });
+          }
+        } else {
+          if (editMode) {
+            return dispatch({ type: "TOGGLE_EDIT_NUMBER", num });
+          } else {
+            return dispatch({ type: "SELECT_NUMBER", num });
+          }
+        }
+      },
       toggleEditMode: () => dispatch({ type: "SET_EDIT_MODE" }),
     },
     board: board.map(
-      ({ fieldValue, guess, hidden }: PrivateBoard): PrivateBoard => ({
+      ({
         fieldValue,
         guess,
+        guessSet,
+        hidden,
+      }: PrivateBoard): PrivateBoard => ({
+        fieldValue,
+        guess,
+        guessSet,
         hidden,
       })
     ),

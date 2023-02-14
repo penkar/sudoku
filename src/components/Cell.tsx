@@ -2,11 +2,12 @@ import React from "react";
 import cn from "classnames";
 
 interface Props {
-  currentNumber?: number;
   currentCell: boolean;
+  currentNumber?: number;
   editMode: boolean;
   fieldValue: number;
   guess: number;
+  guessSet: Set<number>;
   hidden: boolean;
   index: number;
   selectCell?: (arg: number) => void;
@@ -39,12 +40,13 @@ export const Cell = ({
   index,
   selectCell,
 }: Props) => {
-  const [guesses, setGuesses] = React.useState([]);
+  const correctGuess = hidden && Boolean(fieldValue);
   const className = cn("cell", {
     "cell-right": BORDER_RIGHT.includes(index),
     "cell-bottom": BORDER_BOTTOM.includes(index),
     "cell-left": BORDER_LEFT.includes(index),
     "cell-top": BORDER_TOP.includes(index),
+    "cell-selected": correctGuess,
     "cell-current": currentCell,
     "cell-current-number": fieldValue === currentNumber,
     "cell-selectable": !fieldValue,

@@ -3,7 +3,6 @@ import { useBoard } from "../contexts/useBoard";
 
 export const ControlPanel = () => {
   const { actions, errors, editMode } = useBoard();
-  console.log(5, { actions, errors, editMode });
 
   return (
     <div className="control-panel">

@@ -7,11 +7,12 @@ export const Board = () => {
 
   return (
     <div className="board-component">
-      {board.map(({ fieldValue, guess, hidden }, index) => (
+      {board.map(({ fieldValue, guess, guessSet, hidden }, index) => (
         <Cell
           currentCell={currentCell === index}
           fieldValue={fieldValue}
           guess={guess}
+          guessSet={guessSet}
           hidden={hidden}
           index={index}
           key={index}
