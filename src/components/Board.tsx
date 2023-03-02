@@ -2,7 +2,8 @@ import { Cell } from "./Cell";
 import { useBoard } from "../contexts/useBoard";
 
 export const Board = () => {
-  const { actions, board, currentCell, currentNumber, editMode } = useBoard();
+  const { actions, board, currentCell, currentNumber, currentState, editMode } =
+    useBoard();
   const props = { currentNumber, selectCell: actions?.selectCell, editMode };
 
   return (
@@ -10,6 +11,7 @@ export const Board = () => {
       {board.map(({ fieldValue, guess, guessSet, hidden }, index) => (
         <Cell
           currentCell={currentCell === index}
+          currentState={currentState}
           fieldValue={fieldValue}
           guess={guess}
           guessSet={guessSet}

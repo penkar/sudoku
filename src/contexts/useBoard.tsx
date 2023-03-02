@@ -16,6 +16,7 @@ interface ReducerType {
   board: PrivateBoard[];
   currentCell?: number;
   currentNumber?: number;
+  currentState: number;
   difficulty: number;
   editMode: boolean;
   errors: number;
@@ -32,6 +33,7 @@ interface PublicInterface extends ReducerType {
 const BoardContext = React.createContext<PublicInterface>({
   board: [],
   currentCell: undefined,
+  currentState: 0,
   difficulty: 0.5,
   editMode: false,
   errors: 0,
@@ -40,6 +42,7 @@ const BoardContext = React.createContext<PublicInterface>({
 const initialState = {
   currentCell: undefined,
   currentNumber: undefined,
+  currentState: 0,
   difficulty: 0.5,
   editMode: false,
   errors: 0,
@@ -63,24 +66,35 @@ type ActionType =
   | { type: "SELECT_NUMBER"; num: number };
 
 function boardReducer(state: ReducerType, action: ActionType): ReducerType {
+  console.log(action.type, { action, state });
   switch (action.type) {
     case "SET_DIFFICULTY": {
-      return { ...state, difficulty: action.difficulty || 0.5 };
+      return {
+        ...state,
+        currentState: 0,
+        difficulty: action.difficulty || 0.5,
+      };
     }
     case "SET_NEW_BOARD":
-      return { ...state, board: action.board, errors: 0, editMode: false };
+      return {
+        ...state,
+        board: action.board,
+        currentState: 0,
+        errors: 0,
+        editMode: false,
+      };
     case "SET_EDIT_MODE":
       return { ...state, editMode: !state.editMode };
     case "SELECT_CELL": {
       const currentCell =
         action.cell === state.currentCell ? undefined : action.cell;
-      return { ...state, currentCell };
+      return { ...state, currentCell, currentState: 0 };
     }
     case "UNSELECT_NUMBER": {
-      return { ...state, currentNumber: undefined };
+      return { ...state, currentNumber: undefined, currentState: 0 };
     }
     case "SELECT_CURRENT_NUMBER": {
-      return { ...state, currentNumber: action.num };
+      return { ...state, currentNumber: action.num, currentState: 0 };
     }
     case "TOGGLE_EDIT_NUMBER": {
       const currentCell = state.currentCell || 0;
@@ -94,7 +108,7 @@ function boardReducer(state: ReducerType, action: ActionType): ReducerType {
       }
       state.board[currentCell].guessSet = guessSet;
       board[currentCell].guessSet = guessSet;
-      return { ...state, board };
+      return { ...state, board, currentState: 0 };
     }
     case "SELECT_NUMBER": {
       // Action called when user clicks on a number from the number pad.
@@ -114,12 +128,14 @@ function boardReducer(state: ReducerType, action: ActionType): ReducerType {
           board,
           currentCell: undefined,
           currentNumber: undefined,
+          currentState: 0,
         };
       } else {
         return {
           ...state,
           errors: state.errors + 1,
           currentNumber: undefined,
+          currentState: 1,
         };
       }
     }
@@ -135,7 +151,15 @@ interface ProviderLayer {
 
 function BoardProvider({ children }: ProviderLayer) {
   const [
-    { currentCell, currentNumber, difficulty, editMode, errors, board },
+    {
+      currentCell,
+      currentNumber,
+      currentState,
+      difficulty,
+      editMode,
+      errors,
+      board,
+    },
     dispatch,
   ] = React.useReducer(boardReducer, initialState);
 
@@ -156,6 +180,7 @@ function BoardProvider({ children }: ProviderLayer) {
   const exposedState: PublicInterface = {
     currentCell: currentCell,
     currentNumber: currentNumber,
+    currentState: currentState,
     difficulty: difficulty,
     editMode: editMode,
     errors: errors,

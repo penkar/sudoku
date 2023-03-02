@@ -4,6 +4,7 @@ import cn from "classnames";
 interface Props {
   currentCell: boolean;
   currentNumber?: number;
+  currentState: number;
   editMode: boolean;
   fieldValue: number;
   guess: number;
@@ -33,6 +34,7 @@ const BORDER_BOTTOM = [
 export const Cell = ({
   currentCell,
   currentNumber,
+  currentState,
   editMode,
   fieldValue,
   guess,
@@ -50,6 +52,7 @@ export const Cell = ({
     "cell-current": currentCell,
     "cell-current-number": fieldValue === currentNumber,
     "cell-selectable": !fieldValue,
+    "cell-error-state": currentCell && currentState === 1,
   });
   const clickEvent = () => !fieldValue && selectCell && selectCell(index);
 
