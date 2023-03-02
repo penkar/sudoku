@@ -1,8 +1,9 @@
 import React from "react";
 
 import { createBoard } from "../utilities/sudokuBoardCreate";
+import { compareCells } from "../utilities/sudokuBoardChecks";
 
-type PrivateBoard = {
+export type PrivateBoard = {
   currentCell?: number;
   currentNumber?: number;
   fieldValue: number;
@@ -17,6 +18,9 @@ interface ReducerType {
   currentCell?: number;
   currentNumber?: number;
   currentState: number;
+  // 0 is normal state
+  // 1 is error state for a cell
+  // 2 is complete state
   difficulty: number;
   editMode: boolean;
   errors: number;
@@ -123,12 +127,13 @@ function boardReducer(state: ReducerType, action: ActionType): ReducerType {
           fieldValue: currentNumber,
         };
         board[currentCell] = cell;
+        const currentState = compareCells(board) ? 2 : 0;
         return {
           ...state,
           board,
           currentCell: undefined,
           currentNumber: undefined,
-          currentState: 0,
+          currentState: currentState,
         };
       } else {
         return {

@@ -1,4 +1,5 @@
 import type { Board } from "../types";
+import type { PrivateBoard } from "../contexts/useBoard";
 
 export const checkRows = (gameBoard: Board): boolean => {
   let validBoard = true;
@@ -34,3 +35,6 @@ export const checkSector = (gameBoard: Board): boolean => {
   });
   return validBoard;
 };
+
+export const compareCells = (board: PrivateBoard[]): boolean =>
+  board.every(({ value, fieldValue }) => value === fieldValue);
