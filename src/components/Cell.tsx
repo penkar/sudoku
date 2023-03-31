@@ -11,7 +11,8 @@ interface Props {
   guessSet: Set<number>;
   hidden: boolean;
   index: number;
-  selectCell?: (arg: number) => void;
+  selectCell?: (arg1: number) => void;
+  selectNumberCell?: (arg1: number) => void;
 }
 
 const BORDER_RIGHT = [
@@ -41,6 +42,7 @@ export const Cell = ({
   hidden,
   index,
   selectCell,
+  selectNumberCell,
 }: Props) => {
   const correctGuess = hidden && Boolean(fieldValue);
   const className = cn("cell", {
@@ -54,7 +56,15 @@ export const Cell = ({
     "cell-selectable": !fieldValue,
     "cell-error-state": currentCell && currentState === 1,
   });
-  const clickEvent = () => !fieldValue && selectCell && selectCell(index);
+  // const clickEvent = () => !fieldValue && selectCell && selectCell(index);
+  const clickEvent = () => {
+    console.log({ fieldValue });
+    if (fieldValue) {
+      selectNumberCell && selectNumberCell(fieldValue);
+    } else {
+      selectCell && selectCell(index);
+    }
+  };
 
   return (
     <div className={className} onClick={clickEvent}>

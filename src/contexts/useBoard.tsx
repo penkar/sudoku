@@ -29,6 +29,7 @@ interface ReducerType {
 interface PublicInterface extends ReducerType {
   actions?: {
     selectCell: (cell: number) => void;
+    selectNumberCell: (num: number) => void;
     selectNumber: (num: number) => void;
     toggleEditMode: () => void;
   };
@@ -54,17 +55,12 @@ const initialState = {
   board: [],
 };
 type ActionType =
-  | {
-      type: "SET_DIFFICULTY";
-      difficulty: number;
-    }
-  | {
-      type: "SET_NEW_BOARD";
-      board: PrivateBoard[];
-    }
+  | { type: "SET_DIFFICULTY"; difficulty: number }
+  | { type: "SET_NEW_BOARD"; board: PrivateBoard[] }
   | { type: "SET_EDIT_MODE" }
   | { type: "UNSELECT_NUMBER" }
   | { type: "SELECT_CURRENT_NUMBER"; num: number }
+  | { type: "SELECT_CELL_FIELD_VALUE"; num: number }
   | { type: "TOGGLE_EDIT_NUMBER"; num: number }
   | { type: "SELECT_CELL"; cell?: number }
   | { type: "SELECT_NUMBER"; num: number };
@@ -98,6 +94,9 @@ function boardReducer(state: ReducerType, action: ActionType): ReducerType {
       return { ...state, currentNumber: undefined, currentState: 0 };
     }
     case "SELECT_CURRENT_NUMBER": {
+      return { ...state, currentNumber: action.num, currentState: 0 };
+    }
+    case "SELECT_CELL_FIELD_VALUE": {
       return { ...state, currentNumber: action.num, currentState: 0 };
     }
     case "TOGGLE_EDIT_NUMBER": {
@@ -191,6 +190,8 @@ function BoardProvider({ children }: ProviderLayer) {
     errors: errors,
     actions: {
       selectCell: (cell?: number) => dispatch({ type: "SELECT_CELL", cell }),
+      selectNumberCell: (num: number) =>
+        dispatch({ type: "SELECT_CELL_FIELD_VALUE", num }),
       selectNumber: (num: number) => {
         if (currentCell === undefined) {
           if (num === currentNumber) {
