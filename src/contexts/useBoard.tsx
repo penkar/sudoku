@@ -24,6 +24,7 @@ interface ReducerType {
   difficulty: number;
   editMode: boolean;
   errors: number;
+  menuOpen: boolean;
 }
 
 interface PublicInterface extends ReducerType {
@@ -32,7 +33,9 @@ interface PublicInterface extends ReducerType {
     selectCell: (cell: number) => void;
     selectNumberCell: (num: number) => void;
     selectNumber: (num: number) => void;
+    setDifficulty: (num: number) => void;
     toggleEditMode: () => void;
+    toggleMenu: (open: boolean) => void;
   };
 }
 
@@ -43,6 +46,7 @@ const BoardContext = React.createContext<PublicInterface>({
   difficulty: 0.5,
   editMode: false,
   errors: 0,
+  menuOpen: false,
 });
 
 const initialState = {
@@ -54,6 +58,7 @@ const initialState = {
   errors: 0,
   fieldValue: 0,
   board: [],
+  menuOpen: false,
 };
 type ActionType =
   | { type: "SET_DIFFICULTY"; difficulty: number }
@@ -64,15 +69,19 @@ type ActionType =
   | { type: "SELECT_CELL_FIELD_VALUE"; num: number }
   | { type: "TOGGLE_EDIT_NUMBER"; num: number }
   | { type: "SELECT_CELL"; cell?: number }
-  | { type: "SELECT_NUMBER"; num: number };
+  | { type: "SELECT_NUMBER"; num: number }
+  | { type: "TOGGLE_MENU"; open: boolean };
 
 function boardReducer(state: ReducerType, action: ActionType): ReducerType {
-  console.log(action.type, { action, state });
   switch (action.type) {
+    case "TOGGLE_MENU": {
+      return { ...state, menuOpen: action.open };
+    }
     case "SET_DIFFICULTY": {
       return {
         ...state,
         currentState: 0,
+        menuOpen: false,
         difficulty: action.difficulty || 0.5,
       };
     }
@@ -172,12 +181,13 @@ function BoardProvider({ children }: ProviderLayer) {
       difficulty,
       editMode,
       errors,
+      menuOpen,
       board,
     },
     dispatch,
   ] = React.useReducer(boardReducer, initialState);
 
-  const startNewBoard = () => {
+  const startNewBoard = React.useCallback(() => {
     const newBoard = createBoard().map((value) => {
       const hiddenField = Math.random() > difficulty;
       return {
@@ -189,11 +199,11 @@ function BoardProvider({ children }: ProviderLayer) {
       };
     });
     dispatch({ type: "SET_NEW_BOARD", board: newBoard });
-  };
+  }, [difficulty]);
 
   React.useEffect(() => {
     startNewBoard();
-  }, [difficulty]);
+  }, [difficulty, startNewBoard]);
 
   const exposedState: PublicInterface = {
     currentCell: currentCell,
@@ -202,8 +212,12 @@ function BoardProvider({ children }: ProviderLayer) {
     difficulty: difficulty,
     editMode: editMode,
     errors: errors,
+    menuOpen: menuOpen,
     actions: {
       restart: startNewBoard,
+      toggleMenu: (open: boolean) => dispatch({ type: "TOGGLE_MENU", open }),
+      setDifficulty: (difficulty: number) =>
+        dispatch({ type: "SET_DIFFICULTY", difficulty }),
       selectCell: (cell?: number) => dispatch({ type: "SELECT_CELL", cell }),
       selectNumberCell: (num: number) =>
         dispatch({ type: "SELECT_CELL_FIELD_VALUE", num }),
