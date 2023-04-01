@@ -28,6 +28,7 @@ interface ReducerType {
 
 interface PublicInterface extends ReducerType {
   actions?: {
+    restart: () => void;
     selectCell: (cell: number) => void;
     selectNumberCell: (num: number) => void;
     selectNumber: (num: number) => void;
@@ -125,23 +126,22 @@ function boardReducer(state: ReducerType, action: ActionType): ReducerType {
     }
     case "SELECT_NUMBER": {
       // Action called when user clicks on a number from the number pad.
-      let currentNumber = action.num;
       const currentCell = state.currentCell || 0;
       const value = state.board[currentCell].value;
 
-      if (value === currentNumber) {
+      if (value === action.num) {
         const board = state.board;
         const cell = {
           ...board[currentCell],
-          fieldValue: currentNumber,
+          fieldValue: value,
         };
         board[currentCell] = cell;
         const currentState = compareCells(board) ? 2 : 0;
         return {
           ...state,
           board,
-          currentNumber,
           currentCell: undefined,
+          currentNumber: value,
           currentState: currentState,
         };
       } else {
@@ -177,7 +177,7 @@ function BoardProvider({ children }: ProviderLayer) {
     dispatch,
   ] = React.useReducer(boardReducer, initialState);
 
-  React.useEffect(() => {
+  const startNewBoard = () => {
     const newBoard = createBoard().map((value) => {
       const hiddenField = Math.random() > difficulty;
       return {
@@ -189,6 +189,10 @@ function BoardProvider({ children }: ProviderLayer) {
       };
     });
     dispatch({ type: "SET_NEW_BOARD", board: newBoard });
+  };
+
+  React.useEffect(() => {
+    startNewBoard();
   }, [difficulty]);
 
   const exposedState: PublicInterface = {
@@ -199,6 +203,7 @@ function BoardProvider({ children }: ProviderLayer) {
     editMode: editMode,
     errors: errors,
     actions: {
+      restart: startNewBoard,
       selectCell: (cell?: number) => dispatch({ type: "SELECT_CELL", cell }),
       selectNumberCell: (num: number) =>
         dispatch({ type: "SELECT_CELL_FIELD_VALUE", num }),

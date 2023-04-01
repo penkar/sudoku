@@ -6,6 +6,9 @@ export const ControlPanel = () => {
 
   return (
     <div className="control-panel">
+      <div className="control-panel__restart" onClick={actions?.restart}>
+        &#8634;
+      </div>
       <div className="control-panel__errors">&#9888;{errors}</div>
       <div
         className={cn("control-panel__pencil", { "edit-mode": editMode })}

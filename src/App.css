@@ -91,6 +91,10 @@
   max-width: 360px;
   margin: 0;
 }
+.control-panel__restart {
+  color: green;
+  font-size: 1.5em;
+}
 .control-panel__errors {
   color: red;
   font-size: 1.5em;
