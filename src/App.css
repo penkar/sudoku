@@ -1,5 +1,7 @@
 * {
+  box-sizing: border-box;
   user-select: none;
+  z-index: 2;
 }
 
 #root {
@@ -7,6 +9,8 @@
   flex-direction: column;
   height: 100vh;
   justify-content: space-around;
+  margin: auto;
+  width: 360px;
 }
 
 /* Game Board Styles */
@@ -22,6 +26,7 @@
 /* Cell Styles */
 .cell {
   border: 1px solid gray;
+  position: relative;
 }
 .cell.cell-top {
   border-top: 1px solid black;
@@ -44,13 +49,27 @@
   height: 100%;
   text-align: center;
 }
+.cell__field-guess {
+  bottom: 100%;
+  display: grid;
+  font-size: 8px;
+  grid-auto-rows: minmax(auto, 12px);
+  grid-template-columns: repeat(3, 1fr);
+  height: 100%;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
 .cell.cell-current {
   background-color: lightgray;
 }
 .cell.cell-selectable {
   cursor: pointer;
 }
-.cell.cell-current-number {
+.cell.cell-current-number,
+.cell.cell-current-number.cell.cell-selected {
   color: blue;
   background-color: cornsilk;
 }
@@ -77,12 +96,19 @@
   font-size: 1.5em;
 }
 .control-panel__pencil {
+  align-items: center;
+  border-radius: 100%;
   color: gray;
   cursor: pointer;
+  display: flex;
   font-size: 2em;
+  height: 48px;
+  justify-content: center;
+  width: 48px;
 }
 .control-panel__pencil.edit-mode {
-  color: black;
+  background-color: darkgray;
+  color: white;
 }
 
 /* Number Pad components */

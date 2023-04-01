@@ -88,7 +88,12 @@ function boardReducer(state: ReducerType, action: ActionType): ReducerType {
     case "SELECT_CELL": {
       const currentCell =
         action.cell === state.currentCell ? undefined : action.cell;
-      return { ...state, currentCell, currentState: 0 };
+      return {
+        ...state,
+        currentCell,
+        currentNumber: undefined,
+        currentState: 0,
+      };
     }
     case "UNSELECT_NUMBER": {
       return { ...state, currentNumber: undefined, currentState: 0 };
@@ -97,7 +102,12 @@ function boardReducer(state: ReducerType, action: ActionType): ReducerType {
       return { ...state, currentNumber: action.num, currentState: 0 };
     }
     case "SELECT_CELL_FIELD_VALUE": {
-      return { ...state, currentNumber: action.num, currentState: 0 };
+      return {
+        ...state,
+        currentNumber: action.num,
+        currentState: 0,
+        currentCell: undefined,
+      };
     }
     case "TOGGLE_EDIT_NUMBER": {
       const currentCell = state.currentCell || 0;
@@ -130,8 +140,8 @@ function boardReducer(state: ReducerType, action: ActionType): ReducerType {
         return {
           ...state,
           board,
+          currentNumber,
           currentCell: undefined,
-          currentNumber: undefined,
           currentState: currentState,
         };
       } else {
