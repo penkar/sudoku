@@ -22,7 +22,7 @@ const MenuButton = ({ difficultyLevel, level }: MenuButtonType) => {
 };
 
 export const Menu = () => {
-  const { actions, difficulty, menuOpen } = useBoard();
+  const { actions, menuOpen } = useBoard();
 
   return (
     <div
