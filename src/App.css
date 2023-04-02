@@ -126,6 +126,7 @@
 }
 .numpad-num {
   align-items: center;
+  border-radius: 4px;
   display: flex;
   font-size: 2em;
   height: 60px;
