@@ -57,7 +57,6 @@ export const Cell = ({
     "cell-selectable": !fieldValue,
     "cell-error-state": currentCell && currentState === 1,
   });
-  // const clickEvent = () => !fieldValue && selectCell && selectCell(index);
   const clickEvent = () => {
     if (fieldValue) {
       selectNumberCell && selectNumberCell(fieldValue);
