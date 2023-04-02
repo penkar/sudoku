@@ -71,17 +71,19 @@ export const Cell = ({
       <div className="cell__field-value">
         {fieldValue !== 0 ? fieldValue : ""}
       </div>
-      <div className="cell__field-guess">
-        <div>{guessSet.has(1) ? 1 : null}</div>
-        <div>{guessSet.has(2) ? 2 : null}</div>
-        <div>{guessSet.has(3) ? 3 : null}</div>
-        <div>{guessSet.has(4) ? 4 : null}</div>
-        <div>{guessSet.has(5) ? 5 : null}</div>
-        <div>{guessSet.has(6) ? 6 : null}</div>
-        <div>{guessSet.has(7) ? 7 : null}</div>
-        <div>{guessSet.has(8) ? 8 : null}</div>
-        <div>{guessSet.has(9) ? 9 : null}</div>
-      </div>
+      {fieldValue === 0 && (
+        <div className="cell__field-guess">
+          <div>{guessSet.has(1) ? 1 : null}</div>
+          <div>{guessSet.has(2) ? 2 : null}</div>
+          <div>{guessSet.has(3) ? 3 : null}</div>
+          <div>{guessSet.has(4) ? 4 : null}</div>
+          <div>{guessSet.has(5) ? 5 : null}</div>
+          <div>{guessSet.has(6) ? 6 : null}</div>
+          <div>{guessSet.has(7) ? 7 : null}</div>
+          <div>{guessSet.has(8) ? 8 : null}</div>
+          <div>{guessSet.has(9) ? 9 : null}</div>
+        </div>
+      )}
     </div>
   );
 };
