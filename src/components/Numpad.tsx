@@ -1,10 +1,6 @@
 import { Num } from "./Num";
 import { useBoard } from "../contexts/useBoard";
 
-interface BoardFieldValue {
-  fieldValue: number;
-}
-
 export const Numpad = () => {
   const { actions, board, currentNumber } = useBoard();
   const completedArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];

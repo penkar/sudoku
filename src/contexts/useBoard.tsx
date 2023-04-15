@@ -11,6 +11,7 @@ export type PrivateBoard = {
   guessSet: Set<number>;
   hidden: boolean;
   value?: number;
+  time?: number;
 };
 
 interface ReducerType {
@@ -25,6 +26,7 @@ interface ReducerType {
   editMode: boolean;
   errors: number;
   menuOpen: boolean;
+  time?: number;
 }
 
 interface PublicInterface extends ReducerType {
@@ -47,6 +49,7 @@ const BoardContext = React.createContext<PublicInterface>({
   editMode: false,
   errors: 0,
   menuOpen: false,
+  time: undefined,
 });
 
 const initialState = {
@@ -59,6 +62,7 @@ const initialState = {
   fieldValue: 0,
   board: [],
   menuOpen: false,
+  time: undefined,
 };
 type ActionType =
   | { type: "SET_DIFFICULTY"; difficulty: number }
@@ -92,6 +96,7 @@ function boardReducer(state: ReducerType, action: ActionType): ReducerType {
         currentState: 0,
         errors: 0,
         editMode: false,
+        time: undefined,
       };
     case "SET_EDIT_MODE":
       return { ...state, editMode: !state.editMode };
@@ -136,8 +141,10 @@ function boardReducer(state: ReducerType, action: ActionType): ReducerType {
     case "SELECT_NUMBER": {
       // Action called when user clicks on a number from the number pad.
       const currentCell = state.currentCell || 0;
+      let time = state.time;
       const value = state.board[currentCell].value;
 
+      if (time === undefined) time = new Date().getTime();
       if (value === action.num) {
         const board = state.board;
         const cell = {
@@ -149,6 +156,7 @@ function boardReducer(state: ReducerType, action: ActionType): ReducerType {
         return {
           ...state,
           board,
+          time,
           currentCell: undefined,
           currentNumber: value,
           currentState: currentState,
@@ -159,6 +167,7 @@ function boardReducer(state: ReducerType, action: ActionType): ReducerType {
           errors: state.errors + 1,
           currentNumber: undefined,
           currentState: 1,
+          time,
         };
       }
     }
@@ -182,6 +191,7 @@ function BoardProvider({ children }: ProviderLayer) {
       editMode,
       errors,
       menuOpen,
+      time,
       board,
     },
     dispatch,
@@ -213,6 +223,7 @@ function BoardProvider({ children }: ProviderLayer) {
     editMode: editMode,
     errors: errors,
     menuOpen: menuOpen,
+    time: time,
     actions: {
       restart: startNewBoard,
       toggleMenu: (open: boolean) => dispatch({ type: "TOGGLE_MENU", open }),

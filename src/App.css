@@ -25,7 +25,7 @@
 
 /* Cell Styles */
 .cell {
-  border: 1px solid gray;
+  border: 1px solid hwb(0deg 0% 100% / 15%);
   position: relative;
 }
 .cell.cell-top {
@@ -81,6 +81,21 @@
   background-color: pink;
 }
 
+/* Header */
+.control-panel__header {
+  font-size: 1em;
+  padding-top: 12px;
+  position: relative;
+}
+.control-panel__icon {
+  left: 16px;
+  top: 12px;
+  position: absolute;
+}
+.control-panel__title {
+  text-align: center;
+}
+
 /* Control Panel Styles */
 .control-panel {
   align-items: center;
@@ -91,14 +106,13 @@
   max-width: 360px;
   margin: 0;
 }
-.control-panel__restart {
-  color: green;
-  font-size: 1.5em;
-}
+.control-panel__time,
+.control-panel__difficulty,
 .control-panel__errors {
-  color: red;
-  font-size: 1.5em;
+  color: #00000094;
+  font-size: 0.75rem;
 }
+
 .control-panel__pencil {
   align-items: center;
   border-radius: 100%;
@@ -119,7 +133,8 @@
 .numpad-component {
   display: grid;
   grid-auto-rows: minmax(auto, 39px);
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(5, 1fr);
+  /* grid-template-columns: repeat(3, 1fr); */
   margin: 0;
   max-width: 360px;
   padding: 12px;
