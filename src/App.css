@@ -84,16 +84,18 @@
 /* Header */
 .control-panel__header {
   font-size: 1em;
-  padding-top: 12px;
+  padding-top: 6px;
   position: relative;
 }
 .control-panel__icon {
-  left: 16px;
-  top: 12px;
+  left: 6px;
+  top: 2px;
   position: absolute;
+  zoom: 2;
 }
 .control-panel__title {
   text-align: center;
+  font-size: 1.5rem;
 }
 
 /* Control Panel Styles */
